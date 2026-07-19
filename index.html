@@ -4224,21 +4224,21 @@
 
     const CODING_DEMO_RESPONSE = "Here is a coding message demo for testing Claude-style syntax colors:\n\n```python\nfrom dataclasses import dataclass\nfrom typing import Iterable\n\n@dataclass\nclass RuntimeConfig:\n    model: str = \"sonnet-5\"\n    effort: str = \"medium\"\n    max_turns: int = 8\n\n\ndef route_intent(prompt: str, tools: Iterable[str]) -> str:\n    \"\"\"Pick a lightweight route before invoking the agent loop.\"\"\"\n    normalized = prompt.strip().lower()\n    if \"test\" in normalized or \"debug\" in normalized:\n        return \"coding\"\n    if any(tool in normalized for tool in tools):\n        return \"tool_use\"\n    return \"chat\"\n\n\nasync def run_agent(prompt: str, config: RuntimeConfig) -> dict[str, str]:\n    route = route_intent(prompt, tools=[\"bash\", \"files\", \"web\"])\n    return {\n        \"route\": route,\n        \"model\": config.model,\n        \"message\": f\"Running {route} with {config.effort} effort\",\n    }\n```\n\n```typescript\ntype ToolResult = {\n  name: string;\n  ok: boolean;\n  output?: string;\n};\n\nexport function summarize(results: ToolResult[]) {\n  const passed = results.filter((result) => result.ok).length;\n  return `${passed}/${results.length} tools completed`;\n}\n```\n\nThe palette uses a Claude Code-inspired dark Monokai-style syntax theme with warm Claude surfaces.";
 
-    // Zyloo's live catalog has no active Claude 3.x model. Claude Haiku 4.5 is
-    // the active fast successor; Sonnet 4.6 and Opus 4.5 are availability fallbacks.
-    const ZYLOO_MODEL = 'zyloo/claude-haiku-4-5-20251001';
-    const ZYLOO_MODELS = [
-      ZYLOO_MODEL,
-      'zyloo/claude-sonnet-4-6',
-      'zyloo/claude-opus-4-5-20251101'
+    // Active model IDs returned by this ai& key's live /v1/models endpoint.
+    // Qwen 3.6 27B is the requested primary and supports reasoning + tool calls.
+    const AIAND_MODEL = 'qwen/qwen3.6-27b';
+    const AIAND_MODELS = [
+      AIAND_MODEL,
+      'deepseek-ai/deepseek-v4-flash',
+      'openai/gpt-oss-120b'
     ];
     // Route both model APIs and agent tools through the real local server. This
     // removes browser CORS failures and keeps streaming stable from file/preview URLs.
     const AGENT_SERVER_ORIGIN = window.AGENT_SERVER_ORIGIN || 'http://127.0.0.1:8000';
     const agentServerUrl = path => new URL(path, `${AGENT_SERVER_ORIGIN.replace(/\/$/, '')}/`).href;
-    const ZYLOO_API_ENDPOINT = agentServerUrl('/api/zyloo/chat');
-    const ZYLOO_MESSAGES_ENDPOINT = agentServerUrl('/api/zyloo/messages');
-    const ZYLOO_API_KEY = 'sk-zy-95ea4e2beb61db01479c26a07733ec1aa9a4d06b6b75b414';
+    const AIAND_API_ENDPOINT = agentServerUrl('/api/aiand/chat');
+    const AIAND_MESSAGES_ENDPOINT = agentServerUrl('/api/aiand/messages');
+    const AIAND_API_KEY = 'sk-ccc3d9887dc3290f57f31da5bdec2b78cda16da4e5fba17395592717b6c5c8ff';
 
     // Claude's Bash tool is client-side. This custom tool is executed by the
     // restricted /api/run-command endpoint provided by server.py.
@@ -4257,7 +4257,7 @@
       },
       cache_control: { type: 'ephemeral', ttl: '5m' },
     }, {
-      // Native Anthropic server tool: Zyloo executes this remotely, so live
+      // Native Anthropic server tool: ai& executes this remotely, so live
       // search works even when the local Python search server is not running.
       type: 'web_search_20250305',
       name: 'web_search',
@@ -4658,7 +4658,7 @@
           ? 'Thinking mode is ON: reason carefully, but return only the provider-supported summary and the final answer.'
           : 'Thinking mode is OFF: respond directly and quickly.',
         'For internet research, use the native web_search tool and then web_fetch for selected result URLs. Do not invent search endpoints or use curl as a substitute for web_search. Use run_command only for workspace inspection or an explicit public URL requested by the user.',
-        `If the user asks what model you are, say: ${selectedBehaviorLabel()} behavior through the Claude Agent Runtime using ${ZYLOO_MODEL} on Zyloo.`, 
+        `If the user asks what model you are, say: ${selectedBehaviorLabel()} behavior through the Claude Agent Runtime using ${AIAND_MODEL} on ai&.`, 
       ].join(' ');
     }
 
@@ -5031,18 +5031,18 @@
       };
     }
 
-    async function streamZylooMessagesModel(model, signal, onDelta, continuationMessages = []) {
+    async function streamAiandMessagesModel(model, signal, onDelta, continuationMessages = []) {
       const controller = new AbortController();
       const abort = () => controller.abort();
       signal?.addEventListener('abort', abort, { once: true });
       const firstByteTimeout = setTimeout(() => controller.abort(), 18000);
 
       try {
-        const response = await fetch(ZYLOO_MESSAGES_ENDPOINT, {
+        const response = await fetch(AIAND_MESSAGES_ENDPOINT, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'x-api-key': ZYLOO_API_KEY,
+            'x-api-key': AIAND_API_KEY,
             'anthropic-version': '2023-06-01',
           },
           body: JSON.stringify(buildAnthropicRequestBody(model, continuationMessages)),
@@ -5156,18 +5156,18 @@
       }
     }
 
-    async function streamZylooModel(model, signal, onDelta) {
+    async function streamAiandModel(model, signal, onDelta) {
       const controller = new AbortController();
       const abort = () => controller.abort();
       signal?.addEventListener('abort', abort, { once: true });
       const firstByteTimeout = setTimeout(() => controller.abort(), 18000);
 
       try {
-        const response = await fetch(ZYLOO_API_ENDPOINT, {
+        const response = await fetch(AIAND_API_ENDPOINT, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${ZYLOO_API_KEY}`,
+            'Authorization': `Bearer ${AIAND_API_KEY}`,
           },
           body: JSON.stringify({
             model,
@@ -5462,7 +5462,7 @@
       return { toolResults, outputBlocks };
     }
 
-    async function callZylooChatStreaming(index, signal) {
+    async function callAiandChatStreaming(index, signal) {
       let lastError = null;
       const resetPending = (model, protocol) => {
         const message = state.messages[index];
@@ -5488,7 +5488,7 @@
 
       // Claude Messages protocol first: preserve typed blocks and run the
       // client-side command tool until the assistant reaches a final text turn.
-      for (const model of ZYLOO_MODELS) {
+      for (const model of AIAND_MODELS) {
         try {
           resetPending(model, 'anthropic-messages');
           const continuationMessages = [];
@@ -5497,7 +5497,7 @@
           const completedBlocks = [];
 
           for (let toolRound = 0; toolRound < 6; toolRound += 1) {
-            const result = await streamZylooMessagesModel(model, signal, (_event, snapshot) => {
+            const result = await streamAiandMessagesModel(model, signal, (_event, snapshot) => {
               applySnapshot({
                 ...snapshot,
                 text: [...completedText, snapshot.text].filter(text => text?.trim()).join('\n\n'),
@@ -5535,39 +5535,39 @@
         } catch (error) {
           if (error?.name === 'AbortError') throw error;
           lastError = `${model} (Messages): ${error?.message || error}`;
-          console.warn('Zyloo Messages model failed:', lastError);
+          console.warn('ai& Messages model failed:', lastError);
         }
       }
 
       // Compatibility fallback for models temporarily unavailable through the
       // Messages protocol. Regular text/reasoning separation still works here.
-      for (const model of ZYLOO_MODELS) {
+      for (const model of AIAND_MODELS) {
         try {
           resetPending(model, 'openai-chat');
-          const result = await streamZylooModel(model, signal, (_event, snapshot) => {
+          const result = await streamAiandModel(model, signal, (_event, snapshot) => {
             applySnapshot(snapshot, 'openai-chat');
           });
           return result;
         } catch (error) {
           if (error?.name === 'AbortError') throw error;
           lastError = `${model} (Chat): ${error?.message || error}`;
-          console.warn('Zyloo streaming model failed:', lastError);
+          console.warn('ai& streaming model failed:', lastError);
         }
       }
 
-      throw new Error(lastError || 'No Zyloo model is currently available.');
+      throw new Error(lastError || 'No ai& model is currently available.');
     }
 
-    async function callZylooChat(signal) {
+    async function callAiandChat(signal) {
       let lastError = null;
 
-      for (const model of ZYLOO_MODELS) {
+      for (const model of AIAND_MODELS) {
         try {
-          const response = await fetch(ZYLOO_API_ENDPOINT, {
+          const response = await fetch(AIAND_API_ENDPOINT, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${ZYLOO_API_KEY}`,
+              'Authorization': `Bearer ${AIAND_API_KEY}`,
             },
             body: JSON.stringify({
               model,
@@ -5602,21 +5602,21 @@
         }
       }
 
-      throw new Error(lastError || 'No Zyloo model is currently available.');
+      throw new Error(lastError || 'No ai& model is currently available.');
     }
 
     async function getAssistantResponse(prompt, signal) {
       try {
-        return await callZylooChat(signal);
+        return await callAiandChat(signal);
       } catch (error) {
         if (error?.name === 'AbortError') throw error;
-        console.warn('Zyloo request failed:', error);
+        console.warn('ai& request failed:', error);
         return [
-          `All Zyloo model attempts failed.`,
+          `All ai& model attempts failed.`,
           ``,
-          `Tried: ${ZYLOO_MODELS.join(', ')}`,
+          `Tried: ${AIAND_MODELS.join(', ')}`,
           ``,
-          `Possible causes: insufficient Zyloo credit, temporary model unavailability, invalid/expired API key, or browser/network blocking.`,
+          `Possible causes: insufficient ai& credit, temporary model unavailability, invalid/expired API key, or browser/network blocking.`,
           ``,
           `Temporary local fallback response:`,
           ``,
@@ -7224,7 +7224,7 @@
       state.responseAbortController = controller;
 
       try {
-        const result = await callZylooChatStreaming(index, controller.signal);
+        const result = await callAiandChatStreaming(index, controller.signal);
         const message = state.messages[index];
         if (!message || !message.pending) return;
         message.content = result.text;
@@ -7240,7 +7240,7 @@
         render({ keepFocus: false, scroll: true });
       } catch (error) {
         if (error?.name === 'AbortError') return;
-        console.warn('All Zyloo attempts failed; using local fallback:', error);
+        console.warn('All ai& attempts failed; using local fallback:', error);
         const full = getLocalAssistantResponse(prompt);
         const message = state.messages[index];
         if (!message || !message.pending) return;
@@ -7254,7 +7254,7 @@
         message.pending = false;
         state.isRunning = false;
         render({ keepFocus: false, scroll: true });
-        showToast('Zyloo credit unavailable — local fallback used');
+        showToast('ai& credit unavailable — local fallback used');
       } finally {
         if (state.responseAbortController === controller) state.responseAbortController = null;
       }
@@ -7472,5 +7472,5 @@
 
     render({ keepFocus: false });
   </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a191cd35ac9f9d22',t:'MTc4MzcwOTkyNA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a1daf83788678d08',t:'MTc4NDQ3NzE0Ng=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a191cd35ac9f9d22',t:'MTc4MzcwOTkyNA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a1db0c12184835a9',t:'MTc4NDQ3Nzk2MA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
