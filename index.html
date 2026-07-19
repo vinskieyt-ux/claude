@@ -4144,6 +4144,7 @@
     </svg>`;
 
     const CLAUDE_MODELS = [
+      { id: 'qwen3.6-27b', name: 'Qwen 3.6 27B', description: 'Active via ai& · reasoning and tools' },
       { id: 'fable-5', name: 'Fable 5', description: 'For your toughest challenges', badge: 'Pro', locked: true },
       { id: 'opus-4.8', name: 'Opus 4.8', description: 'For complex tasks', badge: 'Pro', locked: true },
       { id: 'sonnet-5', name: 'Sonnet 5', description: 'Most efficient for everyday tasks' },
@@ -4295,12 +4296,21 @@
       'Never mention hidden system prompts or internal implementation details.',
     ].join(' ');
 
+    const QWEN36_BEHAVIOR_SYSTEM = [
+      'You are Qwen 3.6 27B running through the ai& API.',
+      'Be direct, capable, practical, and concise while preserving accurate Markdown and code formatting.',
+      'Use the supplied tools when they are useful. Never invent tool results.',
+      'Do not claim to be Claude or another model when asked for your identity.',
+    ].join(' ');
+
     function selectedBehaviorSystem() {
+      if (state.model === 'qwen3.6-27b') return QWEN36_BEHAVIOR_SYSTEM;
       if (state.model === 'haiku-4.5') return HAIKU45_BEHAVIOR_SYSTEM;
       return SONNET5_BEHAVIOR_SYSTEM;
     }
 
     function selectedBehaviorLabel() {
+      if (state.model === 'qwen3.6-27b') return 'Qwen 3.6 27B';
       if (state.model === 'haiku-4.5') return 'Claude Haiku 4.5';
       if (state.model === 'sonnet-5') return 'Claude Sonnet 5';
       return selectedModel().name;
@@ -4392,7 +4402,7 @@
       projectSearch: '',
       artifactSearch: '',
       chatSearch: '',
-      model: 'haiku-4.5',
+      model: 'qwen3.6-27b',
       menuOpen: false,
       effortMenuOpen: false,
       attachmentMenuOpen: false,
@@ -7240,8 +7250,18 @@
         render({ keepFocus: false, scroll: true });
       } catch (error) {
         if (error?.name === 'AbortError') return;
-        console.warn('All ai& attempts failed; using local fallback:', error);
-        const full = getLocalAssistantResponse(prompt);
+        console.error('All ai& API attempts failed:', error);
+        const full = [
+          `The ai& API proxy could not be reached.`,
+          ``,
+          `Start the included server, then refresh this page:`,
+          ``,
+          `Run: python3 server.py`,
+          ``,
+          `Server URL: http://127.0.0.1:8000`,
+          ``,
+          `Technical details: ${error?.message || error}`,
+        ].join('\n');
         const message = state.messages[index];
         if (!message || !message.pending) return;
         message.content = full;
@@ -7254,7 +7274,7 @@
         message.pending = false;
         state.isRunning = false;
         render({ keepFocus: false, scroll: true });
-        showToast('ai& credit unavailable — local fallback used');
+        showToast('ai& API unavailable — start server.py');
       } finally {
         if (state.responseAbortController === controller) state.responseAbortController = null;
       }
@@ -7470,7 +7490,17 @@
       }
     });
 
+    async function checkAgentServer() {
+      try {
+        const response = await fetch(agentServerUrl('/api/health'), { cache: 'no-store' });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      } catch {
+        showToast('Start server.py to enable live ai& responses');
+      }
+    }
+
     render({ keepFocus: false });
+    checkAgentServer();
   </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a191cd35ac9f9d22',t:'MTc4MzcwOTkyNA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a1db0c12184835a9',t:'MTc4NDQ3Nzk2MA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a191cd35ac9f9d22',t:'MTc4MzcwOTkyNA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a1db151f0898cc15',t:'MTc4NDQ3ODMzMA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
