@@ -341,6 +341,117 @@
       vector-effect: non-scaling-stroke;
     }
 
+    /* Purposeful Claude-style sidebar micro-interactions. Inline SVG lets each
+       navigation icon animate itself instead of moving the whole row. */
+    .claude-sidebar .side-icon,
+    .claude-sidebar .side-icon path,
+    .claude-sidebar .side-icon circle,
+    .claude-sidebar .side-icon rect {
+      transform-box: fill-box;
+      transform-origin: center;
+    }
+
+    .claude-sidebar .side-icon {
+      transition: color 140ms ease, transform 180ms cubic-bezier(.2,.8,.2,1);
+      will-change: transform;
+    }
+
+    @keyframes side-icon-pop {
+      0% { transform: scale(1); }
+      45% { transform: scale(1.14); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes side-chat-talk {
+      0%, 100% { transform: translateY(0) rotate(0); }
+      35% { transform: translateY(-1.2px) rotate(-3deg); }
+      68% { transform: translateY(.4px) rotate(2deg); }
+    }
+
+    @keyframes side-project-lift {
+      0%, 100% { transform: translateY(0); }
+      45% { transform: translateY(-1.8px); }
+    }
+
+    @keyframes side-spark-twinkle {
+      0%, 100% { transform: scale(1) rotate(0); opacity: 1; }
+      45% { transform: scale(1.24) rotate(10deg); opacity: .78; }
+    }
+
+    @keyframes side-code-breathe {
+      0%, 100% { transform: scaleX(1); }
+      45% { transform: scaleX(1.16); }
+    }
+
+    @keyframes side-toolbox-open {
+      0%, 100% { transform: translateY(0) rotate(0); }
+      42% { transform: translateY(-1.4px) rotate(-2deg); }
+      72% { transform: translateY(0) rotate(1deg); }
+    }
+
+    @keyframes side-palette-rock {
+      0%, 100% { transform: rotate(0) scale(1); }
+      35% { transform: rotate(-7deg) scale(1.06); }
+      70% { transform: rotate(5deg) scale(1.04); }
+    }
+
+    @keyframes side-chevron-bounce {
+      0%, 100% { transform: translateY(0); }
+      45% { transform: translateY(2px); }
+    }
+
+    .sidebar-row[data-sidebar-action="chats"]:hover .side-icon,
+    .sidebar-row[data-sidebar-action="chats"]:focus-visible .side-icon {
+      animation: side-chat-talk 520ms cubic-bezier(.2,.8,.2,1);
+    }
+
+    .sidebar-row[data-sidebar-action="projects"]:hover .side-icon,
+    .sidebar-row[data-sidebar-action="projects"]:focus-visible .side-icon {
+      animation: side-project-lift 520ms cubic-bezier(.2,.8,.2,1);
+    }
+
+    .sidebar-row[data-sidebar-action="projects"]:hover .side-icon path:first-child {
+      animation: side-project-lift 430ms ease-out 45ms;
+    }
+
+    .sidebar-row[data-sidebar-action="artifacts"]:hover .side-icon path,
+    .sidebar-row[data-sidebar-action="artifacts"]:focus-visible .side-icon path {
+      animation: side-spark-twinkle 620ms ease-in-out;
+    }
+
+    .sidebar-row[data-sidebar-action="artifacts"]:hover .side-icon path:nth-child(2) { animation-delay: 70ms; }
+    .sidebar-row[data-sidebar-action="artifacts"]:hover .side-icon path:nth-child(3) { animation-delay: 135ms; }
+    .sidebar-row[data-sidebar-action="artifacts"]:hover .side-icon path:nth-child(4) { animation-delay: 200ms; }
+
+    .sidebar-row[data-sidebar-action="code"]:hover .side-icon,
+    .sidebar-row[data-sidebar-action="code"]:focus-visible .side-icon {
+      animation: side-code-breathe 480ms cubic-bezier(.2,.8,.2,1);
+    }
+
+    .sidebar-row[data-sidebar-action="customize"]:hover .side-icon,
+    .sidebar-row[data-sidebar-action="customize"]:focus-visible .side-icon {
+      animation: side-toolbox-open 560ms cubic-bezier(.2,.8,.2,1);
+    }
+
+    .sidebar-row[data-sidebar-action="design"]:hover .side-icon,
+    .sidebar-row[data-sidebar-action="design"]:focus-visible .side-icon {
+      animation: side-palette-rock 620ms cubic-bezier(.2,.8,.2,1);
+    }
+
+    .sidebar-row[data-sidebar-action="design"]:hover .side-icon circle {
+      animation: side-icon-pop 480ms ease-out;
+    }
+
+    .sidebar-row[data-sidebar-action="more"]:hover .side-icon,
+    .sidebar-row[data-sidebar-action="more"]:focus-visible .side-icon {
+      animation: side-chevron-bounce 460ms ease-in-out;
+    }
+
+    .sidebar-icon-button:hover .side-icon,
+    .sidebar-download:hover .side-icon {
+      animation: side-icon-pop 420ms ease-out;
+    }
+
 
     .sidebar-row-title {
       min-width: 0;
@@ -1486,11 +1597,41 @@
       min-height: 36px;
     }
 
+    .project-submenu {
+      width: 238px;
+      padding: 6px;
+      overflow: visible;
+    }
+
+    .project-submenu .attachment-menu-item {
+      min-height: 42px;
+      border-radius: 9px;
+      color: var(--text);
+      font-weight: 520;
+    }
+
+    .project-submenu .attachment-menu-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 7px;
+      background: color-mix(in srgb, var(--text) 8%, transparent);
+      transition: transform 150ms cubic-bezier(.2,.8,.2,1), background 150ms ease;
+    }
+
+    .project-submenu .attachment-menu-item:hover .attachment-menu-icon,
+    .project-submenu .attachment-menu-item:focus-visible .attachment-menu-icon {
+      background: color-mix(in srgb, var(--accent) 13%, transparent);
+      color: var(--accent);
+      transform: rotate(90deg) scale(1.04);
+    }
+
     @media (max-width: 760px) {
       .attachment-submenu {
         left: 0;
-        top: calc(100% + 6px);
-        transform-origin: left top;
+        top: auto;
+        bottom: calc(100% + 8px);
+        width: min(260px, calc(100vw - 32px));
+        transform-origin: left bottom;
       }
     }
 
@@ -3817,8 +3958,12 @@
     @keyframes claude-page-appear {
       from {
         opacity: 0;
-        transform: translateY(8px) scale(.995);
-        filter: blur(1px);
+        transform: translateY(12px) scale(.992);
+        filter: blur(2px);
+      }
+      58% {
+        opacity: 1;
+        filter: blur(0);
       }
       to {
         opacity: 1;
@@ -3827,18 +3972,43 @@
       }
     }
 
+    @keyframes claude-page-child-rise {
+      from { opacity: 0; transform: translateY(7px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     .empty-state,
     .chat-state,
     .projects-page {
-      animation: claude-page-appear 180ms cubic-bezier(.165, .85, .45, 1) both;
-      transform-origin: 50% 50%;
+      animation: claude-page-appear 260ms cubic-bezier(.165, .85, .45, 1) both;
+      transform-origin: 50% 44%;
     }
+
+    .projects-page .projects-header,
+    .projects-page .projects-search-wrap,
+    .projects-page .projects-main,
+    .projects-page .chats-main {
+      animation: claude-page-child-rise 260ms cubic-bezier(.2,.8,.2,1) both;
+    }
+
+    .projects-page .projects-search-wrap { animation-delay: 35ms; }
+    .projects-page .projects-main,
+    .projects-page .chats-main { animation-delay: 70ms; }
 
     @media (prefers-reduced-motion: reduce) {
       .empty-state,
       .chat-state,
-      .projects-page {
-        animation: none;
+      .projects-page,
+      .projects-page .projects-header,
+      .projects-page .projects-search-wrap,
+      .projects-page .projects-main,
+      .projects-page .chats-main,
+      .claude-sidebar .side-icon,
+      .claude-sidebar .side-icon path,
+      .claude-sidebar .side-icon circle,
+      .claude-sidebar .side-icon rect {
+        animation: none !important;
+        transition: none !important;
       }
     }
 
@@ -4054,29 +4224,28 @@
 
     const CODING_DEMO_RESPONSE = "Here is a coding message demo for testing Claude-style syntax colors:\n\n```python\nfrom dataclasses import dataclass\nfrom typing import Iterable\n\n@dataclass\nclass RuntimeConfig:\n    model: str = \"sonnet-5\"\n    effort: str = \"medium\"\n    max_turns: int = 8\n\n\ndef route_intent(prompt: str, tools: Iterable[str]) -> str:\n    \"\"\"Pick a lightweight route before invoking the agent loop.\"\"\"\n    normalized = prompt.strip().lower()\n    if \"test\" in normalized or \"debug\" in normalized:\n        return \"coding\"\n    if any(tool in normalized for tool in tools):\n        return \"tool_use\"\n    return \"chat\"\n\n\nasync def run_agent(prompt: str, config: RuntimeConfig) -> dict[str, str]:\n    route = route_intent(prompt, tools=[\"bash\", \"files\", \"web\"])\n    return {\n        \"route\": route,\n        \"model\": config.model,\n        \"message\": f\"Running {route} with {config.effort} effort\",\n    }\n```\n\n```typescript\ntype ToolResult = {\n  name: string;\n  ok: boolean;\n  output?: string;\n};\n\nexport function summarize(results: ToolResult[]) {\n  const passed = results.filter((result) => result.ok).length;\n  return `${passed}/${results.length} tools completed`;\n}\n```\n\nThe palette uses a Claude Code-inspired dark Monokai-style syntax theme with warm Claude surfaces.";
 
-    // Use the requested Xiaomi model first. Free-model slugs and quotas can be
-    // temporarily unavailable, so active free fallbacks keep chat and tools working.
-    const ZENMUX_MODEL = 'xiaomi/mimo-v2-flash-free';
+    // Current free IDs reported by this key's live /models endpoint.
+    // ZenMux may still return 429 until the account's free quota resets.
+    const ZENMUX_MODEL = 'z-ai/glm-4.7-flash-free';
     const ZENMUX_FREE_MODELS = [
       ZENMUX_MODEL,
-      'stepfun/step-3.7-flash-free',
-      'z-ai/glm-4.7-flash-free',
       'z-ai/glm-4.6v-flash-free',
-      'x-ai/grok-4.5-free'
+      'moonshotai/kimi-k3-free',
+      'google/gemini-3-flash-preview-free'
     ];
-    const ZENMUX_API_ENDPOINT = 'https://zenmux.ai/api/v1/chat/completions';
-    const ZENMUX_MESSAGES_ENDPOINT = 'https://zenmux.ai/api/anthropic/v1/messages';
-    // Tool requests must work even when index.html is opened from file:// or an
-    // opaque preview iframe, where fetch('/api/...') has no valid base URL.
+    // Route both model APIs and agent tools through the real local server. This
+    // removes browser CORS failures and keeps streaming stable from file/preview URLs.
     const AGENT_SERVER_ORIGIN = window.AGENT_SERVER_ORIGIN || 'http://127.0.0.1:8000';
     const agentServerUrl = path => new URL(path, `${AGENT_SERVER_ORIGIN.replace(/\/$/, '')}/`).href;
+    const ZENMUX_API_ENDPOINT = agentServerUrl('/api/zenmux/chat');
+    const ZENMUX_MESSAGES_ENDPOINT = agentServerUrl('/api/zenmux/messages');
     const ZENMUX_API_KEY = 'sk-ai-v1-7f6114c0bd503aba8d2ee310013d4b94b899a3fc3a5e7828c32887825341b52b';
 
     // Claude's Bash tool is client-side. This custom tool is executed by the
     // restricted /api/run-command endpoint provided by server.py.
     const CLAUDE_CLIENT_TOOLS = [{
       name: 'run_command',
-      description: 'Run a read-only command in the restricted project workspace. Supported commands: pwd, ls, cat, head, tail, wc, grep, and echo. Shell operators, redirection, parent paths, and arbitrary programs are disabled.',
+      description: 'Run a read-only command in the restricted project workspace. Supported commands: pwd, ls, cat, head, tail, wc, grep, echo, and read-only curl for public HTTP(S) URLs. Shell operators, redirection, parent paths, uploads, and arbitrary programs are disabled.',
       input_schema: {
         type: 'object',
         properties: {
@@ -4228,6 +4397,7 @@
       menuOpen: false,
       effortMenuOpen: false,
       attachmentMenuOpen: false,
+      attachmentSubmenuOpen: null,
       webSearchEnabled: true,
       activeDialog: null,
       activePastedAttachmentId: null,
@@ -4488,7 +4658,8 @@
         state.thinkingEnabled
           ? 'Thinking mode is ON: reason carefully, but return only the provider-supported summary and the final answer.'
           : 'Thinking mode is OFF: respond directly and quickly.',
-        `If the user asks what model you are, say: ${selectedBehaviorLabel()} behavior through the Claude Agent Runtime using the currently active ZenMux free backend.`,
+        'For internet research, use the native web_search tool and then web_fetch for selected result URLs. Do not invent search endpoints or use curl as a substitute for web_search. Use run_command only for workspace inspection or an explicit public URL requested by the user.',
+        `If the user asks what model you are, say: ${selectedBehaviorLabel()} behavior through the Claude Agent Runtime using the currently active ZenMux free backend.`, 
       ].join(' ');
     }
 
@@ -4715,6 +4886,10 @@
         const type = String(block.type || 'content').toLowerCase();
         if (['text', 'thinking', 'redacted_thinking'].includes(type)) return;
         const rawBlock = cleanAnthropicBlock(block);
+
+        // The custom Arena trace replaces the raw run_command tool_use card.
+        // Keep the protocol block in history, but do not render a duplicate UI.
+        if (type === 'tool_use' && block.name === 'run_command') return;
 
         // Convert Anthropic's native server-side web-search pair into the same
         // raw expandable Arena trace used by the local search fallback.
@@ -5159,7 +5334,7 @@
         const input = parseToolInput(toolUse.input);
         const isCommand = toolUse.name === 'run_command';
         const isSearch = toolUse.name === 'web_search';
-        const command = String(input.command || '');
+        let command = String(input.command || '');
         const query = String(input.query || '');
         const traceId = `${isSearch ? 'search' : isCommand ? 'command' : 'tool'}-${toolUse.id}`;
         const runningBlock = {
@@ -5228,6 +5403,8 @@
             results: [],
           };
         }
+
+        if (isCommand && result.command) command = String(result.command);
 
         const toolResult = {
           type: 'tool_result',
@@ -5611,7 +5788,9 @@
 
 
     function attachmentMenuItem({ action, label, icon, shortcut = '', chevron = false, checked = false, submenuTrigger = '' }) {
-      const triggerAttrs = submenuTrigger ? ` data-submenu-trigger="${submenuTrigger}" aria-haspopup="menu" aria-expanded="false"` : '';
+      const triggerAttrs = submenuTrigger
+        ? ` data-submenu-trigger="${submenuTrigger}" aria-haspopup="menu" aria-expanded="${state.attachmentSubmenuOpen === submenuTrigger}"`
+        : '';
       return `
         <button type="button" class="attachment-menu-item ${submenuTrigger ? 'attachment-has-submenu' : ''}" data-action="${action}"${triggerAttrs} role="menuitem${checked ? 'checkbox' : ''}" ${checked ? `aria-checked="${state.webSearchEnabled}" data-active="${state.webSearchEnabled}"` : ''}>
           <span class="attachment-menu-icon">${icon}</span>
@@ -5716,7 +5895,7 @@
           <textarea id="composer-input" class="composer-input" rows="1" placeholder="How can I help you today?" aria-label="Message">${escapeHtml(state.draft)}</textarea>
           <div class="composer-toolbar">
             <div class="toolbar-left">
-              <div class="attachment-picker ${state.attachmentMenuOpen ? 'open' : ''}">
+              <div class="attachment-picker ${state.attachmentMenuOpen ? 'open' : ''}" data-open-submenu="${escapeHtml(state.attachmentSubmenuOpen || '')}">
                 <button type="button" class="composer-icon-button" data-action="toggle-attach" aria-haspopup="menu" aria-expanded="${state.attachmentMenuOpen}" aria-label="Add to chat" title="Add to chat">${svg.plus}</button>
                 ${attachmentMenuMarkup()}
                 <input type="file" id="file-input" class="sr-only" multiple aria-hidden="true" tabindex="-1" />
@@ -6396,13 +6575,19 @@
         const triggerRect = trigger.getBoundingClientRect();
         picker.style.setProperty('--attachment-submenu-top', `${triggerRect.top - pickerRect.top}px`);
         picker.dataset.openSubmenu = kind;
+        picker.querySelectorAll('[data-submenu-trigger]').forEach(item => {
+          item.setAttribute('aria-expanded', item === trigger ? 'true' : 'false');
+        });
       };
       picker.querySelectorAll('[data-submenu-trigger]').forEach(trigger => {
         trigger.addEventListener('mouseenter', () => openSubmenu(trigger));
         trigger.addEventListener('focus', () => openSubmenu(trigger));
       });
       picker.addEventListener('mouseleave', () => {
-        delete picker.dataset.openSubmenu;
+        if (!state.attachmentSubmenuOpen) {
+          delete picker.dataset.openSubmenu;
+          picker.querySelectorAll('[data-submenu-trigger]').forEach(item => item.setAttribute('aria-expanded', 'false'));
+        }
       });
     }
 
@@ -6663,7 +6848,10 @@
         return;
       }
 
-      if (!['toggle-attach', 'add-files', 'add-to-project', 'skills'].includes(action)) state.attachmentMenuOpen = false;
+      if (!['toggle-attach', 'add-files', 'add-to-project', 'skills'].includes(action)) {
+        state.attachmentMenuOpen = false;
+        state.attachmentSubmenuOpen = null;
+      }
 
       if (action === 'toggle-model') {
         state.menuOpen = !state.menuOpen;
@@ -6674,6 +6862,7 @@
 
       if (action === 'toggle-attach') {
         state.attachmentMenuOpen = !state.attachmentMenuOpen;
+        state.attachmentSubmenuOpen = null;
         state.menuOpen = false;
         render({ keepFocus: false });
         return;
@@ -6697,26 +6886,36 @@
       }
 
       if (action === 'add-to-project') {
-        showToast('Add to project');
+        event.preventDefault();
+        event.stopPropagation();
+        state.attachmentMenuOpen = true;
+        state.attachmentSubmenuOpen = state.attachmentSubmenuOpen === 'project' ? null : 'project';
+        render({ keepFocus: false });
         return;
       }
 
       if (action === 'start-project') {
         event.stopPropagation();
         state.attachmentMenuOpen = false;
+        state.attachmentSubmenuOpen = null;
         state.activeDialog = 'create-project';
         render({ keepFocus: false });
         return;
       }
 
       if (action === 'skills') {
-        showToast('Skills');
+        event.preventDefault();
+        event.stopPropagation();
+        state.attachmentMenuOpen = true;
+        state.attachmentSubmenuOpen = state.attachmentSubmenuOpen === 'skills' ? null : 'skills';
+        render({ keepFocus: false });
         return;
       }
 
       if (action === 'skill-creator') {
         event.stopPropagation();
         state.attachmentMenuOpen = false;
+        state.attachmentSubmenuOpen = null;
         state.activeDialog = 'manage-skills';
         showToast('skill-creator');
         render({ keepFocus: false });
@@ -6726,6 +6925,7 @@
       if (action === 'manage-skills') {
         event.stopPropagation();
         state.attachmentMenuOpen = false;
+        state.attachmentSubmenuOpen = null;
         state.activeDialog = 'manage-skills';
         render({ keepFocus: false });
         return;
@@ -6734,6 +6934,7 @@
       if (action === 'browse-skills') {
         event.stopPropagation();
         state.attachmentMenuOpen = false;
+        state.attachmentSubmenuOpen = null;
         state.activeDialog = 'browse-skills';
         render({ keepFocus: false });
         return;
@@ -6912,6 +7113,7 @@
         size: new Blob([text], { type: 'text/plain' }).size,
       });
       state.attachmentMenuOpen = false;
+      state.attachmentSubmenuOpen = null;
       showToast('Pasted text added');
       render({ keepFocus: true });
     }
@@ -6920,6 +7122,7 @@
       if (!files.length) return;
       const incoming = files.slice(0, 6);
       state.attachmentMenuOpen = false;
+      state.attachmentSubmenuOpen = null;
       incoming.forEach(file => {
         const id = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
         const textLike = isTextLikeFile(file);
@@ -7038,17 +7241,8 @@
         render({ keepFocus: false, scroll: true });
       } catch (error) {
         if (error?.name === 'AbortError') return;
-        const full = [
-          `All ZenMux free model attempts failed.`,
-          ``,
-          `Tried: ${ZENMUX_FREE_MODELS.join(', ')}`,
-          ``,
-          `Possible causes: free-model rate limits, temporary model unavailability, invalid/expired API key, or browser/network blocking.`,
-          ``,
-          `Temporary local fallback response:`,
-          ``,
-          getLocalAssistantResponse(prompt),
-        ].join('\n');
+        console.warn('All ZenMux attempts failed; using local fallback:', error);
+        const full = getLocalAssistantResponse(prompt);
         const message = state.messages[index];
         if (!message || !message.pending) return;
         message.content = full;
@@ -7061,6 +7255,7 @@
         message.pending = false;
         state.isRunning = false;
         render({ keepFocus: false, scroll: true });
+        showToast('ZenMux free quota unavailable — local fallback used');
       } finally {
         if (state.responseAbortController === controller) state.responseAbortController = null;
       }
@@ -7253,6 +7448,7 @@
       }
       if (state.attachmentMenuOpen && !event.target.closest('.attachment-picker')) {
         state.attachmentMenuOpen = false;
+        state.attachmentSubmenuOpen = null;
         changed = true;
       }
       if (changed) render({ keepFocus: false });
@@ -7263,6 +7459,7 @@
         state.menuOpen = false;
         state.effortMenuOpen = false;
         state.attachmentMenuOpen = false;
+        state.attachmentSubmenuOpen = null;
         state.activeDialog = null;
         state.activePastedAttachmentId = null;
         render({ keepFocus: false });
@@ -7276,5 +7473,5 @@
 
     render({ keepFocus: false });
   </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a191cd35ac9f9d22',t:'MTc4MzcwOTkyNA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a191cd35ac9f9d22',t:'MTc4MzcwOTkyNA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a1dacac36b0d0b1c',t:'MTc4NDQ3NTI4NQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
