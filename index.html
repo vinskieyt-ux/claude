@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#F0ECE0" media="(prefers-color-scheme: light)" />
   <meta name="theme-color" content="#2b2a27" media="(prefers-color-scheme: dark)" />
   <title>Claude Clone</title>
-  <meta name="build-version" content="2026-07-22-nvidia-deepseek-v39" />
+  <meta name="build-version" content="2026-07-22-nvidia-deepseek-v40" />
   <style>
     :root {
       --bg: #F0ECE0;
@@ -4911,11 +4911,17 @@
         }
       }
 
-      if (lastMissingResponse) return lastMissingResponse;
       const locations = orderedOrigins.join(', ');
+      if (lastMissingResponse) {
+        throw new TypeError(
+          `Required API route ${path} is missing (HTTP ${lastMissingResponse.status}). `
+          + `The HTML page is deployed, but its server function is not. Deploy api/nvidia-chat.js with index.html. `
+          + `Tried: ${locations}.`,
+        );
+      }
       throw new TypeError(
         `NVIDIA API proxy unreachable. Tried: ${locations}. `
-        + `For a local HTML file, run python3 server.py. For Vercel, deploy the api and lib folders with index.html. `
+        + `For a local HTML file, run python3 server.py. For Vercel, deploy api/nvidia-chat.js with index.html. `
         + `Last network error: ${lastNetworkError?.message || lastNetworkError || 'Failed to fetch'}`,
       );
     }
@@ -8194,8 +8200,8 @@
         if (error?.name === 'AbortError') return;
         console.error('All NVIDIA API attempts failed:', error);
         const errorDetail = String(error?.message || error);
-        const proxyHint = /failed to fetch|proxy unreachable|networkerror|load failed/i.test(errorDetail)
-          ? 'The model is configured correctly, but its server proxy is unreachable. Run python3 server.py for a local file, or deploy index.html together with the api and lib folders plus vercel.json.'
+        const proxyHint = /failed to fetch|proxy unreachable|required api route|networkerror|load failed|http 404/i.test(errorDetail)
+          ? 'The model is configured correctly, but its server proxy is missing or unreachable. Run python3 server.py for a local file, or deploy api/nvidia-chat.js with index.html.'
           : '';
         const full = [
           `DeepSeek V4 Pro could not connect to NVIDIA NIM.`,
@@ -8465,5 +8471,5 @@
 
     render({ keepFocus: false });
   </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a191cd35ac9f9d22',t:'MTc4MzcwOTkyNA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a1f1db33dde4256b',t:'MTc4NDcxNzEzMA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a191cd35ac9f9d22',t:'MTc4MzcwOTkyNA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a1f1e603fe15ce4d',t:'MTc4NDcxNzU3Mw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
