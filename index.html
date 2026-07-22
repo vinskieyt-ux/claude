@@ -3,8 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#F0ECE0" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#2b2a27" media="(prefers-color-scheme: dark)" />
   <title>Claude Clone</title>
-  <meta name="build-version" content="2026-07-20-sidebar-chat-icon-v23" />
+  <meta name="build-version" content="2026-07-20-usage-click-animations-v30" />
   <style>
     :root {
       --bg: #F0ECE0;
@@ -775,9 +778,14 @@
     .claude-code-sidebar .code-sidebar-row:hover,
     .claude-code-sidebar .code-sidebar-row:focus-visible { background: #292927; color: #fff; }
     .claude-code-sidebar .code-sidebar-row.active { background: #333331; color: #fff; }
-    .claude-code-sidebar .side-icon-wrap { width: 17px; height: 17px; color: currentColor; }
-    .claude-code-sidebar .side-icon { width: 15px; height: 15px; stroke-width: 1.5; }
+    .claude-code-sidebar .side-icon-wrap { width: 18px; height: 18px; color: currentColor; }
+    .claude-code-sidebar .side-icon { width: 16px; height: 16px; stroke-width: 1.5; }
     .claude-code-sidebar .side-icon-bubble { width: 20px; height: 20px; background: #2b2b29; }
+    .claude-code-sidebar .code-sidebar-main-list .code-sidebar-row { min-height: 34px; }
+    .claude-code-sidebar .code-sidebar-main-list .side-icon-wrap { width: 21px; height: 21px; }
+    .claude-code-sidebar .code-sidebar-main-list .side-icon { width: 19px; height: 19px; }
+    .claude-code-sidebar .code-sidebar-main-list .sidebar-chat-true-icon { width: 20px; height: 20px; }
+    .claude-code-sidebar .code-sidebar-main-list .side-icon-bubble { width: 22px; height: 22px; }
 
     .code-sidebar-section { margin-top: 19px; }
     .code-sidebar-heading {
@@ -965,7 +973,8 @@
     .ccm-col-bg, .ccm-col-progress { fill: none; stroke-width: 2.2; }
     .ccm-col-bg { stroke: var(--code-side-track); }
     .ccm-col-progress { stroke: var(--accent); stroke-linecap: round; transition: stroke-dasharray 240ms ease; }
-    .ccm-col-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--code-side-text); font-size: 6.5px; font-weight: 650; }
+    .ccm-col-text { position: absolute; inset: 0; z-index: 2; display: flex; align-items: center; justify-content: center; color: #11110f; font-size: 6.5px; font-weight: 750; line-height: 1; text-align: center; pointer-events: none; }
+    @media (prefers-color-scheme: dark) { .ccm-col-text { color: #f5f2ea; } }
     .ccm-min-export { color: var(--accent); font-size: 16px; font-weight: 700; }
     @keyframes ccm-maximize-bloom { 0%,100% { transform: scale(1); } 45% { transform: scale(1.2) rotate(5deg); } }
     @keyframes ccm-min-refresh-roll { to { transform: rotate(360deg); } }
@@ -975,6 +984,40 @@
     .ccm-min-button[data-action="usage-coffee"]:hover svg { animation: ccm-min-coffee-bounce 560ms ease-in-out; }
     .ccm-min-button[data-action="usage-edit"]:hover svg { animation: ccm-settings-roll 560ms ease-out; }
     .ccm-min-button[data-action="usage-export"]:hover { transform: scale(1.16) translateX(1px); }
+    .ccm-refresh-btn.is-animating svg,
+    .ccm-min-button.is-animating svg { animation: ccm-refresh-roll 680ms cubic-bezier(.2,.8,.2,1) !important; }
+    .ccm-refresh-btn[data-action="usage-coffee"].is-animating svg,
+    .ccm-min-button[data-action="usage-coffee"].is-animating svg { animation: ccm-coffee-wiggle 680ms ease-in-out !important; }
+    .ccm-refresh-btn[data-action="usage-edit"].is-animating svg,
+    .ccm-min-button[data-action="usage-edit"].is-animating svg { animation: ccm-settings-roll 680ms cubic-bezier(.2,.8,.2,1) !important; }
+    @keyframes ccm-bar-refresh-pulse { 0%,100% { filter: brightness(1); opacity: 1; } 45% { filter: brightness(1.45); opacity: .72; } }
+    .ccm-usage-panel.ccm-refreshing .ccm-exp-bar > div,
+    .ccm-usage-panel.ccm-refreshing .ccm-col-progress { animation: ccm-bar-refresh-pulse 680ms ease-in-out; }
+
+    /* Keep the minimized Usage toolbar inside the compact 220px sidebar. */
+    .ccm-usage-panel.ccm-minimized { width: 100%; margin-left: 0; margin-right: 0; }
+    .ccm-usage-panel.ccm-minimized .ccm-minimized-bar {
+      width: 100%;
+      min-width: 0;
+      min-height: 34px;
+      max-height: 40px;
+      gap: 3px;
+      padding: 4px;
+      box-sizing: border-box;
+    }
+    .ccm-usage-panel.ccm-minimized .ccm-min-button {
+      width: 20px;
+      height: 20px;
+      flex-basis: 20px;
+      border-radius: 5px;
+    }
+    .ccm-usage-panel.ccm-minimized .ccm-min-button svg { width: 11px; height: 11px; }
+    .ccm-usage-panel.ccm-minimized .ccm-min-circles { flex: 1 1 auto; gap: 3px; }
+    .ccm-usage-panel.ccm-minimized .ccm-col-circle { width: 24px; height: 24px; flex-basis: 24px; }
+    .ccm-usage-panel.ccm-minimized .ccm-col-circle svg { width: 24px; height: 24px; }
+    .ccm-usage-panel.ccm-minimized .ccm-col-text { font-size: 5.8px; }
+    .ccm-usage-panel.ccm-minimized .ccm-min-export { font-size: 13px; }
+
     .ccm-exp-row { margin-top: 12px; }
     .ccm-exp-label-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
     .ccm-exp-label { font-size: 10px; font-weight: 650; }
@@ -4410,6 +4453,38 @@
     }
 
 
+    /* Stable navigation backgrounds across light and dark themes. */
+    .claude-code-sidebar .sidebar-row.code-sidebar-row,
+    .claude-code-sidebar .sidebar-row.code-sidebar-row:focus {
+      background: transparent;
+      box-shadow: none;
+    }
+    .claude-code-sidebar .sidebar-row.code-sidebar-row:hover,
+    .claude-code-sidebar .sidebar-row.code-sidebar-row:focus-visible {
+      background: var(--code-side-hover);
+      color: var(--code-side-text);
+    }
+    .claude-code-sidebar .sidebar-row.code-sidebar-row.active,
+    .claude-code-sidebar .sidebar-row.code-sidebar-row.active:focus,
+    .claude-code-sidebar .sidebar-row.code-sidebar-row.active:focus-visible {
+      background: var(--code-side-active);
+      color: var(--code-side-text);
+    }
+
+    /* Customize page */
+    .customize-main { width: min(896px, 100%); margin: 0 auto; padding: 30px 32px 48px; }
+    .customize-intro { max-width: 620px; }
+    .customize-intro h2 { margin: 0 0 7px; font-family: var(--font-claude-serif); font-size: 23px; font-weight: 560; letter-spacing: -.025em; }
+    .customize-intro p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
+    .customize-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; margin-top: 24px; }
+    .customize-card { display: flex; min-height: 150px; flex-direction: column; gap: 10px; border: 1px solid var(--border); border-radius: 16px; background: color-mix(in srgb,var(--surface) 72%,transparent); padding: 16px; }
+    .customize-card-icon { display: inline-flex; width: 34px; height: 34px; align-items: center; justify-content: center; border-radius: 10px; background: color-mix(in srgb,var(--accent) 11%,transparent); color: var(--accent); }
+    .customize-card-icon svg { width: 19px; height: 19px; }
+    .customize-card h3 { margin: 0; font-size: 15px; font-weight: 650; }
+    .customize-card p { margin: 0; flex: 1; color: var(--muted); font-size: 12px; line-height: 1.45; }
+    .customize-card-actions { display: flex; gap: 7px; }
+    @media (max-width:760px) { .customize-main { padding: 20px 16px 40px; } .customize-grid { grid-template-columns: 1fr; } }
+
     /* Scheduled tasks page */
     .scheduled-page .projects-header { align-items: center; }
     .scheduled-main { width: min(896px, 100%); margin: 0 auto; padding: 28px 32px 48px; }
@@ -4579,8 +4654,8 @@
               <div class="ccm-minimized-bar" aria-label="Minimized usage summary">
                 <button class="ccm-min-button" data-action="usage-maximize" title="Restore panel" aria-label="Restore usage panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button>
                 <div class="ccm-min-circles">
-                  <div class="ccm-col-circle" title="Session (5h): 0% · Resets every 5h"><svg viewBox="0 0 28 28"><circle cx="14" cy="14" r="12" class="ccm-col-bg"/><circle cx="14" cy="14" r="12" class="ccm-col-progress" stroke-dasharray="0 75.4"/></svg><span>0%</span></div>
-                  <div class="ccm-col-circle" title="Weekly: 0% · Resets weekly"><svg viewBox="0 0 28 28"><circle cx="14" cy="14" r="12" class="ccm-col-bg"/><circle cx="14" cy="14" r="12" class="ccm-col-progress" stroke-dasharray="0 75.4"/></svg><span>0%</span></div>
+                  <div class="ccm-col-circle" title="Session (5h): 0% · Resets every 5h"><svg viewBox="0 0 28 28"><circle cx="14" cy="14" r="12" class="ccm-col-bg"/><circle cx="14" cy="14" r="12" class="ccm-col-progress" stroke-dasharray="0 75.4"/></svg><span class="ccm-col-text">0%</span></div>
+                  <div class="ccm-col-circle" title="Weekly: 0% · Resets weekly"><svg viewBox="0 0 28 28"><circle cx="14" cy="14" r="12" class="ccm-col-bg"/><circle cx="14" cy="14" r="12" class="ccm-col-progress" stroke-dasharray="0 75.4"/></svg><span class="ccm-col-text">0%</span></div>
                 </div>
                 <button class="ccm-min-button" data-action="usage-coffee" title="Buy me a coffee" aria-label="Buy me a coffee"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><path d="M6 1v3M10 1v3M14 1v3"/></svg></button>
                 <button class="ccm-min-button" data-action="usage-edit" title="Settings" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg></button>
@@ -4601,6 +4676,12 @@
   <script>
     const app = document.getElementById('app');
     const toast = document.getElementById('toast');
+    const systemThemeMedia = window.matchMedia('(prefers-color-scheme: dark)');
+    const applySystemTheme = () => {
+      document.documentElement.dataset.systemTheme = systemThemeMedia.matches ? 'dark' : 'light';
+    };
+    applySystemTheme();
+    systemThemeMedia.addEventListener?.('change', applySystemTheme);
 
     const svg = {
       claude: `<svg class="claude-ai-icon" fill="#D97757" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Claude</title><path d="m4.7144 15.9555 4.7174-2.6471.079-.2307-.079-.1275h-.2307l-.7893-.0486-2.6956-.0729-2.3375-.0971-2.2646-.1214-.5707-.1215-.5343-.7042.0546-.3522.4797-.3218.686.0608 1.5179.1032 2.2767.1578 1.6514.0972 2.4468.255h.3886l.0546-.1579-.1336-.0971-.1032-.0972L6.973 9.8356l-2.55-1.6879-1.3356-.9714-.7225-.4918-.3643-.4614-.1578-1.0078.6557-.7225.8803.0607.2246.0607.8925.686 1.9064 1.4754 2.4893 1.8336.3643.3035.1457-.1032.0182-.0728-.164-.2733-1.3539-2.4467-1.445-2.4893-.6435-1.032-.17-.6194c-.0607-.255-.1032-.4674-.1032-.7285L6.287.1335 6.6997 0l.9957.1336.419.3642.6192 1.4147 1.0018 2.2282 1.5543 3.0296.4553.8985.2429.8318.091.255h.1579v-.1457l.1275-1.706.2368-2.0947.2307-2.6957.0789-.7589.3764-.9107.7468-.4918.5828.2793.4797.686-.0668.4433-.2853 1.8517-.5586 2.9021-.3643 1.9429h.2125l.2429-.2429.9835-1.3053 1.6514-2.0643.7286-.8196.85-.9046.5464-.4311h1.0321l.759 1.1293-.34 1.1657-1.0625 1.3478-.8804 1.1414-1.2628 1.7-.7893 1.36.0729.1093.1882-.0183 2.8535-.607 1.5421-.2794 1.8396-.3157.8318.3886.091.3946-.3278.8075-1.967.4857-2.3072.4614-3.4364.8136-.0425.0304.0486.0607 1.5482.1457.6618.0364h1.621l3.0175.2247.7892.522.4736.6376-.079.4857-1.2142.6193-1.6393-.3886-3.825-.9107-1.3113-.3279h-.1822v.1093l1.0929 1.0686 2.0035 1.8092 2.5075 2.3314.1275.5768-.3218.4554-.34-.0486-2.2039-1.6575-.85-.7468-1.9246-1.621h-.1275v.17l.4432.6496 2.3436 3.5214.1214 1.0807-.17.3521-.6071.2125-.6679-.1214-1.3721-1.9246L14.38 17.959l-1.1414-1.9428-.1397.079-.674 7.2552-.3156.3703-.7286.2793-.6071-.4614-.3218-.7468.3218-1.4753.3886-1.9246.3157-1.53.2853-1.9004.17-.6314-.0121-.0425-.1397.0182-1.4328 1.9672-2.1796 2.9446-1.7243 1.8456-.4128.164-.7164-.3704.0667-.6618.4008-.5889 2.386-3.0357 1.4389-1.882.929-1.0868-.0062-.1579h-.0546l-6.3385 4.1164-1.1293.1457-.4857-.4554.0608-.7467.2307-.2429 1.9064-1.3114Z"/></svg>`,
@@ -6909,6 +6990,21 @@
     }
 
 
+    function customizePageMarkup() {
+      return `<div id="main-content" class="projects-page customize-page" role="main">
+        <header class="projects-header"><h1 class="projects-title">Customize</h1></header>
+        <main class="customize-main">
+          <section class="customize-intro"><h2>Make Claude work your way</h2><p>Manage reusable skills, connected services, and response preferences from one place.</p></section>
+          <section class="customize-grid">
+            <article class="customize-card"><span class="customize-card-icon">${svg.skillsScroll}</span><h3>Skills</h3><p>Create and manage reusable instructions for writing, coding, research, and recurring workflows.</p><div class="customize-card-actions"><button type="button" class="projects-button secondary" data-action="manage-skills">Manage</button><button type="button" class="projects-button primary" data-action="browse-skills">Browse</button></div></article>
+            <article class="customize-card"><span class="customize-card-icon">${svg.connectorGrid}</span><h3>Connectors</h3><p>Control the tools and external services Qwen can use while completing your requests.</p><div class="customize-card-actions"><button type="button" class="projects-button secondary" data-action="settings-placeholder">Configure</button></div></article>
+            <article class="customize-card"><span class="customize-card-icon">${svg.penLine}</span><h3>Response style</h3><p>Choose how concise, structured, technical, or conversational responses should feel.</p><div class="customize-card-actions"><button type="button" class="projects-button secondary" data-action="settings-placeholder">Edit style</button></div></article>
+            <article class="customize-card"><span class="customize-card-icon">${svg.globeSolid}</span><h3>Search and tools</h3><p>Configure web search, link fetching, and restricted command execution.</p><div class="customize-card-actions"><button type="button" class="projects-button secondary" data-action="customize-tools">Open tools</button></div></article>
+          </section>
+        </main>
+      </div>`;
+    }
+
     function scheduledPageMarkup() {
       const cards = state.scheduledTasks.map((task, index) => `
         <article class="scheduled-card" data-schedule-index="${index}">
@@ -7168,7 +7264,7 @@
       const previousViewport = document.getElementById('viewport');
       const previousScrollTop = previousViewport ? previousViewport.scrollTop : null;
 
-      const pageMarkup = state.currentPage === 'chats' ? chatsPageMarkup() : state.currentPage === 'projects' ? projectsPageMarkup() : state.currentPage === 'artifacts' ? artifactsPageMarkup() : state.currentPage === 'scheduled' ? scheduledPageMarkup() : (state.messages.length ? chatStateMarkup() : emptyStateMarkup());
+      const pageMarkup = state.currentPage === 'chats' ? chatsPageMarkup() : state.currentPage === 'projects' ? projectsPageMarkup() : state.currentPage === 'artifacts' ? artifactsPageMarkup() : state.currentPage === 'scheduled' ? scheduledPageMarkup() : state.currentPage === 'customize' ? customizePageMarkup() : (state.messages.length ? chatStateMarkup() : emptyStateMarkup());
       app.innerHTML = pageMarkup + dialogMarkup();
       bindEvents();
       const usageMessageCount = document.getElementById('code-usage-message-count');
@@ -7455,6 +7551,10 @@
       }
 
       if (action === 'usage-edit') {
+        element.classList.remove('is-animating');
+        void element.offsetWidth;
+        element.classList.add('is-animating');
+        setTimeout(() => element.classList.remove('is-animating'), 700);
         showToast('Usage display settings');
         return;
       }
@@ -7473,13 +7573,28 @@
       }
 
       if (action === 'usage-refresh') {
+        const panel = document.getElementById('ccm-usage-panel');
         const updated = document.querySelector('.ccm-exp-updated');
-        if (updated) updated.textContent = 'Updated now';
+        element.classList.remove('is-animating');
+        panel?.classList.remove('ccm-refreshing');
+        void element.offsetWidth;
+        element.classList.add('is-animating');
+        panel?.classList.add('ccm-refreshing');
+        if (updated) updated.textContent = 'Refreshing…';
+        setTimeout(() => {
+          element.classList.remove('is-animating');
+          panel?.classList.remove('ccm-refreshing');
+          if (updated) updated.textContent = 'Updated now';
+        }, 700);
         showToast('Usage refreshed');
         return;
       }
 
       if (action === 'usage-coffee') {
+        element.classList.remove('is-animating');
+        void element.offsetWidth;
+        element.classList.add('is-animating');
+        setTimeout(() => element.classList.remove('is-animating'), 700);
         window.open('https://www.buymeacoffee.com/', '_blank', 'noopener,noreferrer');
         return;
       }
@@ -7531,6 +7646,14 @@
 
       if (action === 'sort-projects') {
         showToast('Sort by: Last updated');
+        return;
+      }
+
+      if (action === 'customize-tools') {
+        state.currentPage = 'chat';
+        state.toolsMenuOpen = true;
+        setSidebarActive('customize');
+        render({ keepFocus: false });
         return;
       }
 
@@ -8149,8 +8272,10 @@
 
     function setSidebarActive(action) {
       document.querySelectorAll('.claude-sidebar .sidebar-row.active').forEach(row => row.classList.remove('active'));
-      const targetAction = action === 'home' || action === 'new' ? 'chats' : action;
-      const target = document.querySelector(`.claude-sidebar [data-sidebar-action="${targetAction}"]`);
+      // New/Home are transient actions, not persistent navigation pages. Leave
+      // every navigation row unselected after starting a fresh chat.
+      if (action === 'home' || action === 'new' || !action) return;
+      const target = document.querySelector(`.claude-sidebar [data-sidebar-action="${action}"]`);
       if (target?.classList.contains('sidebar-row')) target.classList.add('active');
     }
 
@@ -8168,7 +8293,7 @@
         state.attachments = [];
         state.isRunning = false;
         state.isDictating = false;
-        setSidebarActive('chats');
+        setSidebarActive(action);
         showToast(action === 'new' ? 'New chat' : 'Home');
         render({ keepFocus: false });
         return;
@@ -8209,6 +8334,15 @@
         state.isRunning = false;
         state.isDictating = false;
         setSidebarActive('scheduled');
+        render({ keepFocus: false });
+        return;
+      }
+      if (action === 'customize') {
+        clearInterval(state.typingTimer);
+        state.currentPage = 'customize';
+        state.isRunning = false;
+        state.isDictating = false;
+        setSidebarActive('customize');
         render({ keepFocus: false });
         return;
       }
@@ -8264,5 +8398,5 @@
 
     render({ keepFocus: false });
   </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a191cd35ac9f9d22',t:'MTc4MzcwOTkyNA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a1e9fb2a3de3122b',t:'MTc4NDYzNDU1Mw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a191cd35ac9f9d22',t:'MTc4MzcwOTkyNA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a1f17d337f58fd9b',t:'MTc4NDcxMzI4MA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
