@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#F0ECE0" media="(prefers-color-scheme: light)" />
   <meta name="theme-color" content="#2b2a27" media="(prefers-color-scheme: dark)" />
   <title>Claude Clone</title>
-  <meta name="build-version" content="2026-07-20-usage-click-animations-v30" />
+  <meta name="build-version" content="2026-07-20-usage-export-orange-v36" />
   <style>
     :root {
       --bg: #F0ECE0;
@@ -679,7 +679,7 @@
     }
 
     /* Claude Code-inspired compact dark sidebar */
-    :root { --sidebar-w: 220px; }
+    :root { --sidebar-w: 280px; }
 
     .claude-code-sidebar {
       width: var(--sidebar-w);
@@ -925,8 +925,8 @@
     .code-coffee-button:hover { background: color-mix(in srgb, var(--accent) 13%, transparent); }
 
     /* Original CCM Usage panel structure */
-    .ccm-usage-panel { margin: 5px 1px 0; color: var(--code-side-text); font-family: var(--font-claude-sans); }
-    .ccm-exp { border: 1px solid var(--code-side-border); border-radius: 8px; background: var(--code-side-surface-strong); padding: 9px; box-shadow: 0 4px 12px var(--code-side-shadow); }
+    .ccm-usage-panel { width: 100%; margin: 2px 0 0; color: var(--code-side-text); font-family: var(--font-claude-sans); box-sizing: border-box; }
+    .ccm-exp { width: 100%; border: 1px solid var(--code-side-border); border-radius: 8px; background: var(--code-side-surface-strong); padding: 7px; box-shadow: 0 4px 12px var(--code-side-shadow); box-sizing: border-box; }
     .ccm-exp-header { display: flex; align-items: center; gap: 6px; }
     .ccm-exp-title { flex: 1; font-size: 13px; font-weight: 700; }
     .ccm-exp-header-right { display: flex; align-items: center; gap: 2px; }
@@ -940,33 +940,24 @@
     @keyframes ccm-refresh-roll { from { transform: rotate(0); } to { transform: rotate(360deg); } }
     @keyframes ccm-coffee-wiggle { 0%,100% { transform: rotate(0) translateY(0); } 35% { transform: rotate(-8deg) translateY(-1px); } 68% { transform: rotate(7deg) translateY(-1px); } }
     .ccm-refresh-btn[data-action="usage-edit"]:hover svg,
-    .ccm-refresh-btn[data-action="usage-edit"]:focus-visible svg { animation: ccm-settings-roll 560ms cubic-bezier(.2,.8,.2,1); }
+    .ccm-refresh-btn[data-action="usage-edit"]:focus-visible svg { animation: ccm-settings-roll 900ms linear infinite; }
     .ccm-refresh-btn[data-action="usage-minimize"]:hover svg,
-    .ccm-refresh-btn[data-action="usage-minimize"]:focus-visible svg { animation: ccm-minimize-pop 520ms cubic-bezier(.2,.8,.2,1); }
+    .ccm-refresh-btn[data-action="usage-minimize"]:focus-visible svg { animation: ccm-minimize-pop 900ms cubic-bezier(.2,.8,.2,1) infinite; }
     .ccm-refresh-btn[data-action="usage-refresh"]:hover svg,
-    .ccm-refresh-btn[data-action="usage-refresh"]:focus-visible svg { animation: ccm-refresh-roll 580ms cubic-bezier(.2,.8,.2,1); }
+    .ccm-refresh-btn[data-action="usage-refresh"]:focus-visible svg { animation: ccm-refresh-roll 850ms linear infinite; }
     .ccm-refresh-btn[data-action="usage-coffee"]:hover svg,
-    .ccm-refresh-btn[data-action="usage-coffee"]:focus-visible svg { animation: ccm-coffee-wiggle 560ms ease-in-out; }
+    .ccm-refresh-btn[data-action="usage-coffee"]:focus-visible svg { animation: ccm-coffee-wiggle 900ms ease-in-out infinite; }
 
-    @media (prefers-reduced-motion: reduce) {
-      .ccm-refresh-btn,
-      .ccm-refresh-btn svg,
-      .ccm-min-button,
-      .ccm-min-button svg,
-      .ccm-exp,
-      .ccm-minimized-bar,
-      .ccm-col-circle { animation: none !important; transition: none !important; transform: none !important; }
-    }
     .ccm-exp-updated { margin-left: 2px; color: var(--code-side-soft); font-size: 7px; white-space: nowrap; }
     .ccm-exp { max-height: 330px; opacity: 1; transform: translateY(0) scale(1); overflow: hidden; transition: max-height 280ms cubic-bezier(.2,.8,.2,1), opacity 190ms ease, transform 260ms cubic-bezier(.2,.8,.2,1), padding 240ms ease, border-width 240ms ease; }
     .ccm-exp-body { overflow: hidden; max-height: 260px; opacity: 1; transition: max-height 220ms ease, opacity 170ms ease; }
     .ccm-usage-panel.ccm-minimized .ccm-exp { max-height: 0; opacity: 0; transform: translateY(12px) scale(.94); padding-top: 0; padding-bottom: 0; border-width: 0; pointer-events: none; }
-    .ccm-minimized-bar { display: flex; max-height: 0; min-height: 0; align-items: center; gap: 5px; overflow: hidden; border: 0 solid var(--code-side-border); border-radius: 8px; background: var(--code-side-surface-strong); opacity: 0; transform: translateY(-8px) scale(.94); padding: 0 7px; box-shadow: 0 4px 12px var(--code-side-shadow); transition: max-height 280ms cubic-bezier(.2,.8,.2,1), min-height 280ms cubic-bezier(.2,.8,.2,1), opacity 190ms 80ms ease, transform 280ms cubic-bezier(.2,.8,.2,1), border-width 200ms ease, padding 240ms ease; pointer-events: none; }
+    .ccm-minimized-bar { display: flex; max-height: 0; min-height: 0; align-items: center; justify-content: center; gap: 5px; overflow: hidden; border: 0 solid var(--code-side-border); border-radius: 8px; background: var(--code-side-surface-strong); opacity: 0; transform: translateY(-8px) scale(.94); padding: 0 7px; box-shadow: 0 4px 12px var(--code-side-shadow); transition: max-height 280ms cubic-bezier(.2,.8,.2,1), min-height 280ms cubic-bezier(.2,.8,.2,1), opacity 190ms 80ms ease, transform 280ms cubic-bezier(.2,.8,.2,1), border-width 200ms ease, padding 240ms ease; pointer-events: none; }
     .ccm-usage-panel.ccm-minimized .ccm-minimized-bar { max-height: 46px; min-height: 38px; border-width: 1px; opacity: 1; transform: translateY(0) scale(1); padding: 5px 7px; pointer-events: auto; }
     .ccm-min-button { display: inline-flex; width: 24px; height: 24px; flex: 0 0 24px; align-items: center; justify-content: center; border: 0; border-radius: 6px; background: transparent; color: var(--code-side-muted); padding: 0; cursor: pointer; transition: color 150ms ease, background 150ms ease, transform 160ms cubic-bezier(.2,.8,.2,1), box-shadow 160ms ease; }
     .ccm-min-button:hover, .ccm-min-button:focus-visible { background: color-mix(in srgb, var(--accent) 13%, transparent); color: var(--accent); transform: scale(1.14); box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 24%, transparent); outline: none; }
     .ccm-min-button svg { width: 13px; height: 13px; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; transform-box: fill-box; transform-origin: center; }
-    .ccm-min-circles { display: flex; min-width: 0; flex: 1; align-items: center; justify-content: center; gap: 5px; }
+    .ccm-min-circles { display: flex; min-width: 0; flex: 0 0 auto; align-items: center; justify-content: center; gap: 4px; }
     .ccm-col-circle { position: relative; width: 29px; height: 29px; flex: 0 0 29px; cursor: pointer; transition: transform 180ms cubic-bezier(.2,.8,.2,1); }
     .ccm-col-circle:hover { transform: scale(1.12) rotate(3deg); }
     .ccm-col-circle svg { width: 29px; height: 29px; transform: rotate(-90deg); }
@@ -975,14 +966,29 @@
     .ccm-col-progress { stroke: var(--accent); stroke-linecap: round; transition: stroke-dasharray 240ms ease; }
     .ccm-col-text { position: absolute; inset: 0; z-index: 2; display: flex; align-items: center; justify-content: center; color: #11110f; font-size: 6.5px; font-weight: 750; line-height: 1; text-align: center; pointer-events: none; }
     @media (prefers-color-scheme: dark) { .ccm-col-text { color: #f5f2ea; } }
-    .ccm-min-export { color: var(--accent); font-size: 16px; font-weight: 700; }
+    .ccm-min-export,
+    .ccm-min-button.ccm-min-export {
+      border-radius: 999px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 750;
+      line-height: 1;
+      box-shadow: 0 2px 7px color-mix(in srgb, var(--accent) 28%, transparent);
+    }
+    .ccm-min-export:hover,
+    .ccm-min-export:focus-visible {
+      background: var(--accent-hover);
+      color: #fff;
+      box-shadow: 0 3px 10px color-mix(in srgb, var(--accent) 40%, transparent);
+    }
     @keyframes ccm-maximize-bloom { 0%,100% { transform: scale(1); } 45% { transform: scale(1.2) rotate(5deg); } }
     @keyframes ccm-min-refresh-roll { to { transform: rotate(360deg); } }
     @keyframes ccm-min-coffee-bounce { 0%,100% { transform: translateY(0) rotate(0); } 45% { transform: translateY(-2px) rotate(-7deg); } 72% { transform: translateY(0) rotate(5deg); } }
-    .ccm-min-button[data-action="usage-maximize"]:hover svg { animation: ccm-maximize-bloom 520ms ease-out; }
-    .ccm-min-button[data-action="usage-refresh"]:hover svg { animation: ccm-min-refresh-roll 560ms ease-out; }
-    .ccm-min-button[data-action="usage-coffee"]:hover svg { animation: ccm-min-coffee-bounce 560ms ease-in-out; }
-    .ccm-min-button[data-action="usage-edit"]:hover svg { animation: ccm-settings-roll 560ms ease-out; }
+    .ccm-min-button[data-action="usage-maximize"]:hover svg { animation: ccm-maximize-bloom 900ms ease-in-out infinite; }
+    .ccm-min-button[data-action="usage-refresh"]:hover svg { animation: ccm-min-refresh-roll 850ms linear infinite; }
+    .ccm-min-button[data-action="usage-coffee"]:hover svg { animation: ccm-min-coffee-bounce 900ms ease-in-out infinite; }
+    .ccm-min-button[data-action="usage-edit"]:hover svg { animation: ccm-settings-roll 900ms linear infinite; }
     .ccm-min-button[data-action="usage-export"]:hover { transform: scale(1.16) translateX(1px); }
     .ccm-refresh-btn.is-animating svg,
     .ccm-min-button.is-animating svg { animation: ccm-refresh-roll 680ms cubic-bezier(.2,.8,.2,1) !important; }
@@ -1012,13 +1018,13 @@
       border-radius: 5px;
     }
     .ccm-usage-panel.ccm-minimized .ccm-min-button svg { width: 11px; height: 11px; }
-    .ccm-usage-panel.ccm-minimized .ccm-min-circles { flex: 1 1 auto; gap: 3px; }
+    .ccm-usage-panel.ccm-minimized .ccm-min-circles { flex: 0 0 auto; gap: 3px; }
     .ccm-usage-panel.ccm-minimized .ccm-col-circle { width: 24px; height: 24px; flex-basis: 24px; }
     .ccm-usage-panel.ccm-minimized .ccm-col-circle svg { width: 24px; height: 24px; }
     .ccm-usage-panel.ccm-minimized .ccm-col-text { font-size: 5.8px; }
     .ccm-usage-panel.ccm-minimized .ccm-min-export { font-size: 13px; }
 
-    .ccm-exp-row { margin-top: 12px; }
+    .ccm-exp-row { margin-top: 8px; }
     .ccm-exp-label-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
     .ccm-exp-label { font-size: 10px; font-weight: 650; }
     .ccm-exp-reset { color: var(--code-side-soft); font-size: 8px; white-space: nowrap; }
@@ -1026,7 +1032,7 @@
     .ccm-exp-bar { height: 4px; overflow: hidden; border-radius: 99px; background: var(--code-side-track); }
     .ccm-exp-bar > div { height: 100%; border-radius: inherit; background: var(--accent); transition: width 220ms ease; }
     .ccm-exp-percent { color: var(--code-side-muted); font-size: 9px; text-align: right; }
-    .ccm-exp-controls { display: grid; grid-template-columns: 1fr 30px 8px 67px; align-items: center; gap: 5px; margin-top: 14px; }
+    .ccm-exp-controls { display: grid; grid-template-columns: minmax(0,1fr) 30px 8px 67px; align-items: center; gap: 4px; margin-top: 10px; }
     #ccm-sidebar-slider { width: 100%; accent-color: var(--accent); }
     .ccm-exp-input { width: 30px; height: 25px; border: 1px solid var(--code-side-border); border-radius: 5px; background: var(--code-side-surface); color: var(--code-side-text); padding: 0 3px; text-align: center; font-size: 9px; outline: none; -moz-appearance: textfield; }
     .ccm-exp-input::-webkit-inner-spin-button { display: none; }
@@ -4623,12 +4629,6 @@
             <a class="sidebar-row code-sidebar-row" href="#" data-sidebar-action="scheduled"><span class="side-icon-wrap"><svg class="side-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="sidebar-row-title">Scheduled</span></a>
             <a class="sidebar-row code-sidebar-row" href="#" data-sidebar-action="customize"><span class="side-icon-wrap"><svg class="side-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 7V5.8A1.8 1.8 0 0 1 9.8 4h4.4A1.8 1.8 0 0 1 16 5.8V7M4 9h16v10H4Z" stroke-linejoin="round"/><path d="M4 12h16M9 15h6" stroke-linecap="round"/></svg></span><span class="sidebar-row-title">Customize</span></a>
           </div>
-
-          <section class="code-sidebar-section" aria-label="Pinned">
-            <div class="code-sidebar-heading">Pinned</div>
-            <a class="sidebar-row code-sidebar-row" href="#" data-sidebar-action="pinned-ab"><span class="side-icon-wrap"><svg class="side-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 5h12M5 8h14l-1 11H6Z" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="sidebar-row-title">AB Testing</span></a>
-            <a class="sidebar-row code-sidebar-row" href="#" data-sidebar-action="pinned-books"><span class="side-icon-wrap"><svg class="side-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 5h12M5 8h14l-1 11H6Z" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="sidebar-row-title">Bookkeeping</span></a>
-          </section>
 
           <section class="code-sidebar-section code-sidebar-recents" aria-label="Recents">
             <div class="code-sidebar-heading code-recents-heading"><span>Recents <span aria-hidden="true">›</span></span><button type="button" class="code-recents-filter" data-sidebar-action="recent-filter" aria-label="Filter recents"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M7 5v14M17 5v14M4 9h6M14 15h6" stroke-linecap="round"/><circle cx="7" cy="9" r="1.5" fill="currentColor" stroke="none"/><circle cx="17" cy="15" r="1.5" fill="currentColor" stroke="none"/></svg></button></div>
@@ -8398,5 +8398,5 @@
 
     render({ keepFocus: false });
   </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a191cd35ac9f9d22',t:'MTc4MzcwOTkyNA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a1f17d337f58fd9b',t:'MTc4NDcxMzI4MA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a191cd35ac9f9d22',t:'MTc4MzcwOTkyNA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a1f1b141fa74c061',t:'MTc4NDcxNTQxMg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
